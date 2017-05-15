@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import hu.ait.setgame.view.GameView;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -20,10 +22,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final GameView gameView = (GameView) findViewById(R.id.gameView);
+
         showStartGameDialog();
     }
 
-    public void openScoreBoard(){}
+    public void openScoreBoard(){
+        Intent intent = new Intent(this, ScoreBoard.class);
+        startActivity(intent);
+    }
 
     public void showUserNameDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -46,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showSplash() {
-        Intent intentStartEdit = new Intent(this, Splash.class);
-        startActivity(intentStartEdit);
+        Intent intent = new Intent(this, Splash.class);
+        startActivity(intent);
     }
 
     public void showStartGameDialog() {
@@ -73,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         btnViewScores.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                alertDialog.dismiss();
                 openScoreBoard();
             }
         });

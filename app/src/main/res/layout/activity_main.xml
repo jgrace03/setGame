@@ -10,8 +10,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="hu.ait.setgame.MainActivity">
 
-    <TextView
+    <hu.ait.setgame.view.GameView
+        android:id="@+id/gameView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:layout_below="@+id/gameView"
+        android:id="@+id/shuffle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="SHUFFLE"/>
+
+    <TextView
+        android:layout_below="@+id/shuffle"
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timer: "/>
+
+    <TextView
+        android:layout_below="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cards Left: "/>
 </RelativeLayout>

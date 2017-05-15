@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name="hu.ait.setgame.Splash"></activity>
+        <activity android:name="hu.ait.setgame.ScoreBoard"></activity>
     </application>
 
 </manifest>

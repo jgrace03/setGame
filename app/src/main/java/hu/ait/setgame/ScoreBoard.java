@@ -1,4 +1,6 @@
 package hu.ait.setgame;
 
-public class ScoreBoard {
+import android.support.v7.app.AppCompatActivity;
+
+public class ScoreBoard extends AppCompatActivity {
 }
