@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import hu.ait.setgame.model.GameModel;
 import hu.ait.setgame.view.GameView;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         final GameView gameView = (GameView) findViewById(R.id.gameView);
 
-        showStartGameDialog();
+        showStartGameDialog(gameView);
     }
 
     public void openScoreBoard(){
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showUserNameDialog() {
+    public void showUserNameDialog(final GameView gameView) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater myLayout = this.getLayoutInflater();
 
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GameModel.getInstance().startGame();
+                gameView.startGame();
                 alert.dismiss();
             }
         });
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showStartGameDialog() {
+    public void showStartGameDialog(final GameView gameView) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater myLayout = this.getLayoutInflater();
 
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                showUserNameDialog();
+                showUserNameDialog(gameView);
             }
         });
 

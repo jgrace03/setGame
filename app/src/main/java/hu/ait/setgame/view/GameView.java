@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import hu.ait.setgame.R;
+import hu.ait.setgame.model.Card;
 import hu.ait.setgame.model.GameModel;
 
 import static android.R.color.holo_purple;
@@ -20,9 +21,12 @@ public class GameView extends View {
     private Paint paintLine;
     private Paint paintRect;
     private Bitmap bitmapLogo;
+    private Bitmap bitmapCard;
+    Context context;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
 
         paintLine = new Paint();
         paintLine.setColor(getResources().getColor(holo_purple));
@@ -56,16 +60,8 @@ public class GameView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        //canvas.drawRect(0, 0, getWidth(), getHeight(), paintBg);
-
-        /*canvas.drawBitmap(
-                bitmapBg,
-                0, 0, null);*/
-
-        //canvas.drawText("6", 0, getHeight()/3, paintText);
         drawPlayers(canvas);
         drawGameGrid(canvas);
-        //drawPlayers(canvas);
     }
 
 
@@ -109,15 +105,84 @@ public class GameView extends View {
                             leftX + getWidth() / 16, topY + getHeight() / 9, null);
 
 
-                } /*else if (TicTacToeModel.getInstance().getField(i,j) == TicTacToeModel.CROSS) {
-                    canvas.drawLine(i * getWidth() / 3, j * getHeight() / 3,
-                            (i + 1) * getWidth() / 3,
-                            (j + 1) * getHeight() / 3, paintCross);
+                } else {
+                    drawCard(GameModel.getInstance().getField(i,j), canvas);
+                    float leftX = j * getWidth() / 4 ;
+                    float topY = i * getHeight() / 3;
 
-                    canvas.drawLine((i + 1) * getWidth() / 3, j * getHeight() / 3,
-                            i * getWidth() / 3, (j + 1) * getHeight() / 3, paintCross);
-                } */
+
+                    canvas.drawBitmap(
+                            bitmapCard,
+                            leftX, topY, null);
+
+                }
             }
         }
+    }
+
+
+    private void drawCard(Card card, Canvas canvas){
+        short color = card.getColor();
+        short shape = card.getShape();
+        short shadding = card.getShading();
+        short number = card.getNumber();
+
+        String cardName = "";
+
+        switch (color) {
+            case Card.RED:
+                cardName += "r";
+                break;
+            case Card.GREEN:
+                cardName += "g";
+                break;
+            case Card.PURPLE:
+                cardName += "p";
+                break;
+        }
+
+        switch (shape) {
+            case Card.DIAMOND:
+                cardName += "d";
+                break;
+            case Card.OVAL:
+                cardName += "o";
+                break;
+            case Card.SQUIGGLE:
+                cardName += "s";
+                break;
+        }
+
+        switch (shadding) {
+            case Card.OUTLINED:
+                cardName += "o";
+                break;
+            case Card.SOLID:
+                cardName += "sl";
+                break;
+            case Card.STRIPED:
+                cardName += "s";
+                break;
+        }
+
+        switch (number) {
+            case 1:
+                cardName += "1";
+                break;
+            case 2:
+                cardName += "2";
+                break;
+            case 3:
+                cardName += "3";
+                break;
+        }
+
+        int id = context.getResources().getIdentifier(cardName, "drawable", context.getPackageName());
+        bitmapCard = BitmapFactory.decodeResource(getResources(), id);
+        bitmapCard = Bitmap.createScaledBitmap(bitmapCard, getWidth()/4, getHeight()/3, false);
+    }
+
+    public void startGame() {
+        invalidate();
     }
 }

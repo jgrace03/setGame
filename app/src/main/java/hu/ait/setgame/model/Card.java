@@ -17,11 +17,13 @@ public class Card {
     private short color;
     private short shape;
     private short shading;
+    private short number;
 
-    public Card(short color, short shape, short shading) {
+    public Card(short color, short shape, short shading, short number) {
         this.color = color;
         this.shape = shape;
         this.shading = shading;
+        this.number = number;
     }
 
     public short getColor() {
@@ -34,6 +36,14 @@ public class Card {
 
     public short getShading() {
         return shading;
+    }
+
+    public short getNumber() {
+        return number;
+    }
+
+    public void setNumber(short number) {
+        this.number = number;
     }
 
     public void setColor(short color) {
