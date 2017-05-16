@@ -17,7 +17,6 @@ public class Splash extends AppCompatActivity{
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                // TODO: Your application init goes here.
                 finish();
             }
         }, 3000);
