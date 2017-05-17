@@ -10,6 +10,7 @@ import hu.ait.setgame.view.GameView;
 public class GameModel {
 
     private int cards_left;
+    private int num_selected;
 
     private static GameModel instance = null;
 
@@ -51,7 +52,17 @@ public class GameModel {
     }
 
     public void select(int i, int j) {
-        selected[i][j] = true;
+
+        //if (num_selected < 0) num_selected = 0; //fixes weird random mem error
+
+        if (selected[i][j] == true) {
+            selected[i][j] = false;
+            num_selected--;
+        } else {
+            num_selected++;
+            selected[i][j] = true;
+            checkSet();
+        }
     }
 
     public void clearModel() {
@@ -65,8 +76,11 @@ public class GameModel {
     }
 
     public void unSelectAll() {
+
+        num_selected = 0;
+
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 4; j++) {
                 selected[i][j] = false;
             }
         }
@@ -107,7 +121,11 @@ public class GameModel {
     }
 
     private Card getRandomCard() {
-        int R = (int)(Math.random() * ((cards_left - 1) + 1));
+
+        if (cards_left == 0)
+            return null;
+
+        int R = (int)(Math.random() * (cards_left - 1));
         cards_left--;
         return cards.remove(R);
     }
@@ -121,6 +139,86 @@ public class GameModel {
         }
         unSelectAll();
         initBoard();
+    }
+
+    public void checkSet() {
+
+        if (num_selected < 3)
+            return;
+
+        Card [] selectedCards = new Card[3];
+        int [] XCoords = new int[3];
+        int [] YCoords = new int[3];
+
+        int k = 0;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (selected[i][j] == true) {
+                    selectedCards[k] = model[i][j];
+                    XCoords[k] = j;
+                    YCoords[k] = i;
+                    k++;
+                }
+            }
+        }
+
+        if (checkSet(selectedCards)) {
+            for (int i = 0; i < 3; i++) {
+                cards.remove(selectedCards[i]);
+                model[YCoords[i]][XCoords[i]] = getRandomCard();
+            }
+        }
+
+        unSelectAll();
+    }
+
+
+    private boolean checkSet(Card [] cards) {
+
+        if (!allSame(cards[0].getColor(), cards[1].getColor(), cards[2].getColor()) &&
+                !allDifferent(cards[0].getColor(), cards[1].getColor(), cards[2].getColor()))  {
+            return false;
+        }
+
+        if (!allSame(cards[0].getShape(), cards[1].getShape(), cards[2].getShape()) &&
+                !allDifferent(cards[0].getShape(), cards[1].getShape(), cards[2].getShape()))  {
+            return false;
+        }
+
+        if (!allSame(cards[0].getShading(), cards[1].getShading(), cards[2].getShading()) &&
+                !allDifferent(cards[0].getShading(), cards[1].getShading(), cards[2].getShading()))  {
+            return false;
+        }
+
+        if (!allSame(cards[0].getNumber(), cards[1].getNumber(), cards[2].getNumber()) &&
+                !allDifferent(cards[0].getNumber(), cards[1].getNumber(), cards[2].getNumber()))  {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean allDifferent(short s1, short s2, short s3) {
+
+        if (s1 != s2) {
+            if (s2 != s3) {
+                if (s1 != s3) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean allSame(short s1, short s2, short s3) {
+
+        if (s1 == s2) {
+            if (s2 == s3) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
