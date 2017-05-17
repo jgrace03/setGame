@@ -26,6 +26,16 @@ public class MainActivity extends AppCompatActivity {
         final GameView gameView = (GameView) findViewById(R.id.gameView);
 
         showStartGameDialog(gameView);
+
+        Button btnShuffle = (Button) findViewById(R.id.shuffle);
+        btnShuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //gameView.resetGame();
+                gameView.inval();
+                GameModel.getInstance().shuffle();
+            }
+        });
     }
 
     public void openScoreBoard(){
@@ -48,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 GameModel.getInstance().startGame();
-                gameView.startGame();
+                gameView.inval();
                 alert.dismiss();
             }
         });

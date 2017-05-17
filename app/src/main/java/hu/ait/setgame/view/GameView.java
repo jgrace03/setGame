@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import hu.ait.setgame.R;
 import hu.ait.setgame.model.Card;
@@ -20,6 +21,7 @@ public class GameView extends View {
 
     private Paint paintLine;
     private Paint paintRect;
+    private Paint paintHighLight;
     private Bitmap bitmapLogo;
     private Bitmap bitmapCard;
     Context context;
@@ -33,6 +35,11 @@ public class GameView extends View {
         paintLine.setStyle(Paint.Style.STROKE);
         paintLine.setStrokeWidth(5);
 
+        paintHighLight = new Paint();
+        paintHighLight.setColor(Color.parseColor("#0BB5FF"));
+        paintHighLight.setStyle(Paint.Style.STROKE);
+        paintHighLight.setStrokeWidth(15);
+
         paintRect = new Paint();
         paintRect.setColor(Color.parseColor("#d3d3d3"));
         paintRect.setStyle(Paint.Style.FILL);
@@ -45,7 +52,6 @@ public class GameView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         bitmapLogo = Bitmap.createScaledBitmap(bitmapLogo, getWidth()/8, getHeight()/8, false);
-
     }
 
     @Override
@@ -83,6 +89,21 @@ public class GameView extends View {
         canvas.drawLine(3 * getWidth() / 4, 0, 3 * getWidth() / 4, getHeight(),
                 paintLine);
 
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+
+                if (GameModel.getInstance().getSelected(i,j)) {
+
+                    float leftX = j * getWidth() / 4 ;
+                    float rightX = (j + 1) * getWidth() /4;
+                    float topY = i * getHeight() / 3;
+                    float bottomY = (i + 1) * getHeight() / 3;
+
+                    canvas.drawRect(leftX, topY, rightX, bottomY, paintHighLight);
+                }
+            }
+        }
+
     }
 
     private void drawPlayers(Canvas canvas) {
@@ -108,13 +129,15 @@ public class GameView extends View {
                 } else {
                     drawCard(GameModel.getInstance().getField(i,j), canvas);
                     float leftX = j * getWidth() / 4 ;
+                    float rightX = (j + 1) * getWidth() /4;
                     float topY = i * getHeight() / 3;
-
+                    float bottomY = (i + 1) * getHeight() / 3;
 
                     canvas.drawBitmap(
                             bitmapCard,
                             leftX, topY, null);
 
+                    //canvas.drawRect(leftX, topY, rightX, bottomY, paintHighLight);
                 }
             }
         }
@@ -182,7 +205,21 @@ public class GameView extends View {
         bitmapCard = Bitmap.createScaledBitmap(bitmapCard, getWidth()/4, getHeight()/3, false);
     }
 
-    public void startGame() {
+    public void inval() {
         invalidate();
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int tX = ((int)event.getX())/ (getWidth() / 4);
+            int tY = ((int)event.getY())/ (getHeight() / 3);
+
+            GameModel.getInstance().select(tY,tX);
+            invalidate();
+        }
+        return true;
+    }
+
 }

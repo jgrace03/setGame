@@ -9,19 +9,21 @@ import hu.ait.setgame.view.GameView;
 
 public class GameModel {
 
-    private int cards_left = 81;
+    private int cards_left;
 
     private static GameModel instance = null;
 
     private GameModel() { //private constructor makes class a singleton
         //setField(0,0, Card.RED, Card.DIAMOND, Card.OUTLINED, (short) 2);
+        clearModel();
+        unSelectAll();
     }
 
     public void startGame() {
+        clearModel();
+        unSelectAll();
         initCards();
         initBoard();
-        //GameView gameView = (GameView) findViewById(R.id.gameView);
-        //gameView.startGame();
     }
 
     public static GameModel getInstance() {
@@ -37,6 +39,38 @@ public class GameModel {
             {null, null, null, null},
             {null, null, null, null},
     };
+
+    private boolean [][] selected = {
+            {false, false, false, false},
+            {false, false, false, false},
+            {false, false, false, false},
+    };
+
+    public boolean getSelected(int i, int j) {
+        return selected[i][j];
+    }
+
+    public void select(int i, int j) {
+        selected[i][j] = true;
+    }
+
+    public void clearModel() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                model[i][j] = null;
+            }
+        }
+
+        cards_left = 81;
+    }
+
+    public void unSelectAll() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                selected[i][j] = false;
+            }
+        }
+    }
 
     private List<Card> cards = new ArrayList<Card>();
 
@@ -73,9 +107,20 @@ public class GameModel {
     }
 
     private Card getRandomCard() {
-        int R = (int)(Math.random() * ((cards_left) + 1));
+        int R = (int)(Math.random() * ((cards_left - 1) + 1));
         cards_left--;
         return cards.remove(R);
+    }
+
+    public void shuffle() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                cards.add(model[i][j]);
+                cards_left++;
+            }
+        }
+        unSelectAll();
+        initBoard();
     }
 
 }
