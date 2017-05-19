@@ -14,24 +14,23 @@ public class Game extends RealmObject {
         this.gameID = gameID;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public String getGameID() {
         return gameID;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getUserName() {
         return userName;
     }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     public String getTime() {
         return time;
     }
-
 }

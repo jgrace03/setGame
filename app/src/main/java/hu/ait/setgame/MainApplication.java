@@ -28,9 +28,6 @@ public class MainApplication extends Application {
         realmGame.close();
     }
 
-    public Realm getRealm() {
-        return realmGame;
-    }
-
+    public Realm getRealm() { return realmGame; }
 
 }

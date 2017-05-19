@@ -1,18 +1,49 @@
 package hu.ait.setgame.model;
 
-
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
+import hu.ait.setgame.MainActivity;
 import hu.ait.setgame.R;
+import hu.ait.setgame.data.Game;
 import hu.ait.setgame.view.GameView;
+import io.realm.Realm;
+
 
 public class GameModel {
 
+    private MainActivity mainActivity;
+    private Realm realmGame;
+    private static GameModel instance = null;
+
+    private String username;
     private int cards_left;
     private int num_selected;
 
-    private static GameModel instance = null;
+    public GameModel(MainActivity activity, Realm realmGame, String username) {
+        this.mainActivity = activity;
+        this.realmGame = realmGame;
+        this.username = username;
+
+        clearModel();
+        unSelectAll();
+    }
+    public static GameModel getInstance(MainActivity activity, Realm realmGame, String username) {
+        if (instance == null) {
+            instance = new GameModel(activity, realmGame, username);
+        } else if (instance.mainActivity == null ||
+                instance.realmGame == null) {
+            instance.mainActivity = activity;
+            instance.realmGame = realmGame;
+            instance.username = username;
+        }
+
+        return instance;
+    }
 
     private GameModel() { //private constructor makes class a singleton
         //setField(0,0, Card.RED, Card.DIAMOND, Card.OUTLINED, (short) 2);
@@ -25,6 +56,52 @@ public class GameModel {
         unSelectAll();
         initCards();
         initBoard();
+    }
+
+    private void endGame() {
+        saveGame();
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        LayoutInflater myLayout = mainActivity.getLayoutInflater();
+
+        View viewGameOver = myLayout.inflate(R.layout.game_over, null);
+        builder.setView(viewGameOver);
+        final AlertDialog alert = builder.create();
+        alert.show();
+
+        Button btnRestartGame = (Button) viewGameOver.findViewById(R.id.btnNewGame);
+        btnRestartGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Todo: Start a new game, with time for UI to load
+                startGame();
+                GameView gameView = (GameView) mainActivity.findViewById(R.id.gameView);
+                mainActivity.showUserNameDialog(gameView);
+                alert.dismiss();
+            }
+        });
+
+        Button btnViewHighScores = (Button) viewGameOver.findViewById(R.id.btnHighScores);
+        btnViewHighScores.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame();
+                mainActivity.openScoreBoard();
+                alert.dismiss();
+            }
+        });
+    }
+
+    private void saveGame() {
+        // TODO: Check Realm for longest time
+        Game game = new Game();
+        game.setGameID(UUID.randomUUID().toString());
+        game.setUserName(username);
+        game.setTime("10s");
+
+        if (!realmGame.isInTransaction()) { realmGame.beginTransaction(); }
+        realmGame.copyToRealm(game);
+        realmGame.commitTransaction();
     }
 
     public static GameModel getInstance() {
@@ -167,6 +244,10 @@ public class GameModel {
             for (int i = 0; i < 3; i++) {
                 cards.remove(selectedCards[i]);
                 model[YCoords[i]][XCoords[i]] = getRandomCard();
+            }
+
+            if (cards_left == 0) {
+                endGame();
             }
         }
 
