@@ -25,6 +25,8 @@ public class GameView extends View {
     private Bitmap bitmapLogo;
     private Bitmap bitmapCard;
     Context context;
+    int width;
+    int height;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,6 +47,9 @@ public class GameView extends View {
         paintRect.setStyle(Paint.Style.FILL);
 
         bitmapLogo = BitmapFactory.decodeResource(getResources(), R.drawable.set);
+
+        width = GameModel.getInstance().width;
+        height = GameModel.getInstance().height;
     }
 
     @Override
@@ -74,30 +79,34 @@ public class GameView extends View {
     private void drawGameGrid(Canvas canvas) {
         // border
         canvas.drawRect(0, 0, getWidth(), getHeight(), paintLine);
-        // two horizontal lines
-        canvas.drawLine(0, getHeight() / 3, getWidth(), getHeight() / 3,
+        // three horizontal lines
+        canvas.drawLine(0, getHeight() / height, getWidth(), getHeight() / height,
                 paintLine);
-        canvas.drawLine(0, 2 * getHeight() / 3, getWidth(),
-                2 * getHeight() / 3, paintLine);
+        canvas.drawLine(0, 2 * getHeight() / height, getWidth(),
+                2 * getHeight() / height, paintLine);
+        canvas.drawLine(0, 3 * getHeight() / height, getWidth(),
+                3 * getHeight() / height, paintLine);
 
 
-        // two vertical lines
-        canvas.drawLine(getWidth() / 4, 0, getWidth() / 4, getHeight(),
+        // four vertical lines
+        canvas.drawLine(getWidth() / width, 0, getWidth() / width, getHeight(),
                 paintLine);
-        canvas.drawLine(2 * getWidth() / 4, 0, 2 * getWidth() / 4, getHeight(),
+        canvas.drawLine(2 * getWidth() / width, 0, 2 * getWidth() / width, getHeight(),
                 paintLine);
-        canvas.drawLine(3 * getWidth() / 4, 0, 3 * getWidth() / 4, getHeight(),
+        canvas.drawLine(3 * getWidth() / width, 0, 3 * getWidth() / width, getHeight(),
+                paintLine);
+        canvas.drawLine(4 * getWidth() / width, 0, 4 * getWidth() / width, getHeight(),
                 paintLine);
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
 
                 if (GameModel.getInstance().getSelected(i,j)) {
 
-                    float leftX = j * getWidth() / 4 ;
-                    float rightX = (j + 1) * getWidth() /4;
-                    float topY = i * getHeight() / 3;
-                    float bottomY = (i + 1) * getHeight() / 3;
+                    float leftX = j * getWidth() / width ;
+                    float rightX = (j + 1) * getWidth() / width;
+                    float topY = i * getHeight() / height;
+                    float bottomY = (i + 1) * getHeight() / height;
 
                     canvas.drawRect(leftX, topY, rightX, bottomY, paintHighLight);
                 }
@@ -107,31 +116,32 @@ public class GameView extends View {
     }
 
     private void drawPlayers(Canvas canvas) {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 if (GameModel.getInstance().getField(i,j) == null) {
 
                     // draw a circle at the center of the field
 
                     // X coordinate: left side of the square + half width of the square
-                    float leftX = j * getWidth() / 4 ;
-                    float rightX = (j + 1) * getWidth() /4;
-                    float topY = i * getHeight() / 3;
-                    float bottomY = (i + 1) * getHeight() / 3;
+                    float leftX = j * getWidth() / width ;
+                    float rightX = (j + 1) * getWidth() / width;
+                    float topY = i * getHeight() / height;
+                    float bottomY = (i + 1) * getHeight() / height;
 
                     canvas.drawRect(leftX, topY, rightX, bottomY, paintRect);
 
                     canvas.drawBitmap(
                             bitmapLogo,
-                            leftX + getWidth() / 16, topY + getHeight() / 9, null);
+                            leftX + getWidth() / (width * width),
+                            topY + getHeight() / (height * height), null);
 
 
                 } else {
                     drawCard(GameModel.getInstance().getField(i,j), canvas);
-                    float leftX = j * getWidth() / 4 ;
-                    float rightX = (j + 1) * getWidth() /4;
-                    float topY = i * getHeight() / 3;
-                    float bottomY = (i + 1) * getHeight() / 3;
+                    float leftX = j * getWidth() / width ;
+                    float rightX = (j + 1) * getWidth() / width;
+                    float topY = i * getHeight() / height;
+                    float bottomY = (i + 1) * getHeight() / height;
 
                     canvas.drawBitmap(
                             bitmapCard,
@@ -202,7 +212,7 @@ public class GameView extends View {
 
         int id = context.getResources().getIdentifier(cardName, "drawable", context.getPackageName());
         bitmapCard = BitmapFactory.decodeResource(getResources(), id);
-        bitmapCard = Bitmap.createScaledBitmap(bitmapCard, getWidth()/4, getHeight()/3, false);
+        bitmapCard = Bitmap.createScaledBitmap(bitmapCard, getWidth()/ width, getHeight()/height, false);
     }
 
     public void inval() {
@@ -213,8 +223,8 @@ public class GameView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            int tX = ((int)event.getX())/ (getWidth() / 4);
-            int tY = ((int)event.getY())/ (getHeight() / 3);
+            int tX = ((int)event.getX())/ (getWidth() / width);
+            int tY = ((int)event.getY())/ (getHeight() / height);
 
             GameModel.getInstance().select(tY,tX);
             invalidate();

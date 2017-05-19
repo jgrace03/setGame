@@ -21,8 +21,12 @@ public class GameModel {
     private static GameModel instance = null;
 
     private String username;
-    private int cards_left;
+    public int cards_left;
+    public int num_pairs;
     private int num_selected;
+
+    public int width = 5;
+    public int height = 4;
 
     public GameModel(MainActivity activity, Realm realmGame, String username) {
         this.mainActivity = activity;
@@ -113,15 +117,17 @@ public class GameModel {
     }
 
     private Card [][] model = {
-            {null, null, null, null},
-            {null, null, null, null},
-            {null, null, null, null},
+            {null, null, null, null, null},
+            {null, null, null, null, null},
+            {null, null, null, null, null},
+            {null, null, null, null, null},
     };
 
     private boolean [][] selected = {
-            {false, false, false, false},
-            {false, false, false, false},
-            {false, false, false, false},
+            {false, false, false, false, false},
+            {false, false, false, false, false},
+            {false, false, false, false, false},
+            {false, false, false, false, false},
     };
 
     public boolean getSelected(int i, int j) {
@@ -143,21 +149,22 @@ public class GameModel {
     }
 
     public void clearModel() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 model[i][j] = null;
             }
         }
 
         cards_left = 81;
+        num_pairs = 0;
     }
 
     public void unSelectAll() {
 
         num_selected = 0;
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 selected[i][j] = false;
             }
         }
@@ -190,8 +197,8 @@ public class GameModel {
     }
 
     private void initBoard() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 model[i][j] = getRandomCard();
             }
         }
@@ -208,8 +215,8 @@ public class GameModel {
     }
 
     public void shuffle() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 cards.add(model[i][j]);
                 cards_left++;
             }
@@ -229,24 +236,34 @@ public class GameModel {
 
         int k = 0;
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 if (selected[i][j] == true) {
-                    selectedCards[k] = model[i][j];
-                    XCoords[k] = j;
-                    YCoords[k] = i;
-                    k++;
+                    if (model[i][j] != null) {
+                        selectedCards[k] = model[i][j];
+                        XCoords[k] = j;
+                        YCoords[k] = i;
+                        k++;
+                    } else {
+                        unSelectAll();
+                        return;
+                    }
                 }
             }
         }
 
         if (checkSet(selectedCards)) {
+
+            num_pairs++;
+
+            System.out.println(num_pairs);
+
             for (int i = 0; i < 3; i++) {
                 cards.remove(selectedCards[i]);
                 model[YCoords[i]][XCoords[i]] = getRandomCard();
             }
 
-            if (cards_left == 0) {
+            if (num_pairs == 27) {
                 endGame();
             }
         }
