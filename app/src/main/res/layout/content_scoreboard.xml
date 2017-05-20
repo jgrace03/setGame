@@ -15,10 +15,11 @@
 
         <TextView
             android:id="@+id/tvHeader"
-            android:text="High Scores"
+            android:text="@string/high_scores"
             android:textSize="30sp"
             android:textColor="#000000"
             android:gravity="center"
+            android:padding="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

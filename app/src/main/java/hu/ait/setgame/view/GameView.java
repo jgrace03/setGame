@@ -60,14 +60,6 @@ public class GameView extends View {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int w = MeasureSpec.getSize(widthMeasureSpec);
-        int h = MeasureSpec.getSize(heightMeasureSpec);
-        int d = w == 0 ? h : h == 0 ? w : w < h ? w : h;
-        setMeasuredDimension(d, d);
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 

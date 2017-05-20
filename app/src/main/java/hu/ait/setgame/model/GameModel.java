@@ -190,6 +190,8 @@ public class GameModel {
                 model[i][j] = getRandomCard();
             }
         }
+
+        mainActivity.updateCardsLeft(cards_left);
     }
 
     private Card getRandomCard() {

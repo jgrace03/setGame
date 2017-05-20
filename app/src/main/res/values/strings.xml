@@ -5,4 +5,10 @@
     <string name="ss">s</string>
     <string name="anonymous">Anonymous</string>
     <string name="s">s</string>
+    <string name="enter_user_name">Enter User Name:</string>
+    <string name="start_game">START GAME</string>
+    <string name="high_scores">High Scores</string>
+    <string name="shuffle">SHUFFLE</string>
+    <string name="timer_display">Timer:</string>
+    <string name="cards_left_display">Cards Left:</string>
 </resources>
