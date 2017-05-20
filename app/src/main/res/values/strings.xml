@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SetGame</string>
+    <string name="zero_seconds">0.00s</string>
+    <string name="total_cards">81</string>
+    <string name="ss">s</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="s">s</string>
 </resources>

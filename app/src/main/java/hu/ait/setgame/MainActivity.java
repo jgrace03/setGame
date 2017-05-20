@@ -1,29 +1,28 @@
 package hu.ait.setgame;
 
-
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 import hu.ait.setgame.model.GameModel;
 import hu.ait.setgame.view.GameView;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView time;
     private TextView tvNumCards;
+    private Button btnShuffle;
     private double startTime;
-    private double ellapsedTime;
+    private double elapsedTime;
     private Timer mainTimer = null;
 
     private class MyShowTimerTask extends TimerTask {
@@ -33,9 +32,10 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ellapsedTime = (
-                            System.currentTimeMillis()- startTime)/1000.0;
-                    time.setText("" + String.format("%.2f", ellapsedTime) + "s");
+                    elapsedTime = (
+                            System.currentTimeMillis() - startTime) / 1000.0;
+                    String timeText = String.valueOf(elapsedTime) + getString(R.string.ss);
+                    time.setText(timeText);
                 }
             });
 
@@ -50,20 +50,16 @@ public class MainActivity extends AppCompatActivity {
         showSplash();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
         ((MainApplication)getApplication()).openRealm();
 
-        time = (TextView) findViewById(R.id.time);
-        time.setText("0.00s");
+        setContentView(R.layout.activity_main);
+        setupUI();
 
         final GameView gameView = (GameView) findViewById(R.id.gameView);
-        tvNumCards = (TextView) findViewById(R.id.tvNumCards);
-        tvNumCards.setText("81");
 
         showStartGameDialog(gameView);
 
-        Button btnShuffle = (Button) findViewById(R.id.shuffle);
+        btnShuffle = (Button) findViewById(R.id.shuffle);
         btnShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,6 +67,16 @@ public class MainActivity extends AppCompatActivity {
                 GameModel.getInstance().shuffle();
             }
         });
+    }
+
+    private void setupUI() {
+        time = (TextView) findViewById(R.id.time);
+        time.setText(R.string.zero_seconds);
+
+        tvNumCards = (TextView) findViewById(R.id.tvNumCards);
+        tvNumCards.setText(R.string.total_cards);
+
+        btnShuffle = (Button) findViewById(R.id.shuffle);
     }
 
     public void updateCardsLeft(int numCards) {
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             mainTimer = null;
         }
 
-        return ellapsedTime;
+        return elapsedTime;
     }
 
     public void openScoreBoard(){
@@ -112,38 +118,28 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog alert = builder.create();
         alert.show();
 
-        final EditText etUsername = (EditText) gameView.findViewById(R.id.etUsername);
         Button startGame = (Button) Username.findViewById(R.id.startGame);
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EditText etUsername = (EditText) Username.findViewById(R.id.etUsername);
                 String username = "";
-                // TODO: etUsername is null
-                if (etUsername != null) {
-                    username = etUsername.getText().toString();
-                }
-                if (username.equals("")) { username = "Anonymous"; }
+                username = etUsername.getText().toString();
+                if (username.equals("")) { username = getString(R.string.anonymous); }
 
                 startNewGame(gameView, username);
-//                GameModel.getInstance().startGame();
-//                gameView.inval();
                 alert.dismiss();
             }
         });
-
     }
 
     public void startNewGame(GameView gameView, String username) {
-        GameModel.getInstance(this,((MainApplication)getApplication()).getRealm(), username)
-                .startGame();
+        GameModel.getInstance(this,((MainApplication)getApplication()).getRealm(), username).startGame();
         gameView.inval();
 
         startTime = System.currentTimeMillis();
-
         if (mainTimer == null) {
             mainTimer = new Timer();
-
             mainTimer.schedule(new MyShowTimerTask(),
                     0, 10);
         }

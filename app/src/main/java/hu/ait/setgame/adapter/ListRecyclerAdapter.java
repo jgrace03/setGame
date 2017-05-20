@@ -1,6 +1,5 @@
 package hu.ait.setgame.adapter;
 
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,12 +18,12 @@ import io.realm.Sort;
 public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ViewHolder> {
 
     private List<Game> gameList;
-    private Context context;
+    private Context gameContext;
     private Realm realmGame;
 
     public ListRecyclerAdapter(Context context, Realm realm) {
-        this.context = context;
-        this.realmGame = realm;
+        gameContext = context;
+        realmGame = realm;
 
         RealmResults<Game> itemResult = realmGame.where(Game.class)
                 .findAll()
@@ -49,7 +48,10 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
     public void onBindViewHolder(ListRecyclerAdapter.ViewHolder holder, int position) {
 
         holder.tvUsername.setText(gameList.get(position).getUserName());
-        holder.tvScore.setText(String.valueOf(gameList.get(position).getTime()) + "s");
+
+        String score = String.valueOf(gameList.get(position).getTime())
+                + gameContext.getString(R.string.s);
+        holder.tvScore.setText(score);
     }
 
     @Override
@@ -60,7 +62,6 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
             return 0;
         }
     }
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -7,10 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import hu.ait.setgame.adapter.ListRecyclerAdapter;
 
-public class ScoreBoard extends AppCompatActivity {
 
-    private ListRecyclerAdapter listRecyclerAdapter;
-    private RecyclerView recyclerItem;
+public class ScoreBoard extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,15 +20,14 @@ public class ScoreBoard extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        recyclerItem = (RecyclerView) findViewById(R.id.recyclerItem);
+        RecyclerView recyclerItem = (RecyclerView) findViewById(R.id.recyclerItem);
         recyclerItem.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerItem.setLayoutManager(linearLayoutManager);
 
-        listRecyclerAdapter = new ListRecyclerAdapter(this,
-                ((MainApplication)getApplication()).getRealm());
+        ListRecyclerAdapter listRecyclerAdapter = new ListRecyclerAdapter(this,
+                ((MainApplication) getApplication()).getRealm());
         recyclerItem.setAdapter(listRecyclerAdapter);
     }
-
 }

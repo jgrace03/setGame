@@ -1,6 +1,7 @@
 package hu.ait.setgame.model;
 
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +25,6 @@ public class GameModel {
     public int cards_left;
     public int num_pairs;
     private int num_selected;
-
     public int width = 5;
     public int height = 4;
 
@@ -36,21 +36,28 @@ public class GameModel {
         clearModel();
         unSelectAll();
     }
+
     public static GameModel getInstance(MainActivity activity, Realm realmGame, String username) {
         if (instance == null) {
             instance = new GameModel(activity, realmGame, username);
-        } else if (instance.mainActivity == null ||
-                instance.realmGame == null) {
+        } else {
             instance.mainActivity = activity;
             instance.realmGame = realmGame;
             instance.username = username;
+        }
+        return instance;
+    }
+
+
+    public static GameModel getInstance() {
+        if (instance == null) {
+            instance = new GameModel();
         }
 
         return instance;
     }
 
-    private GameModel() { //private constructor makes class a singleton
-        //setField(0,0, Card.RED, Card.DIAMOND, Card.OUTLINED, (short) 2);
+    private GameModel() {
         clearModel();
         unSelectAll();
     }
@@ -77,7 +84,6 @@ public class GameModel {
         btnRestartGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Todo: Start a new game, with time for UI to load
                 startGame();
                 GameView gameView = (GameView) mainActivity.findViewById(R.id.gameView);
                 mainActivity.showUserNameDialog(gameView);
@@ -97,7 +103,6 @@ public class GameModel {
     }
 
     private void saveGame(double time) {
-        // TODO: Check Realm for longest time
         Game game = new Game();
         game.setGameID(UUID.randomUUID().toString());
         game.setUserName(username);
@@ -106,14 +111,6 @@ public class GameModel {
         if (!realmGame.isInTransaction()) { realmGame.beginTransaction(); }
         realmGame.copyToRealm(game);
         realmGame.commitTransaction();
-    }
-
-    public static GameModel getInstance() {
-        if (instance == null) {
-            instance = new GameModel();
-        }
-
-        return instance;
     }
 
     private Card [][] model = {
@@ -135,9 +132,6 @@ public class GameModel {
     }
 
     public void select(int i, int j) {
-
-        //if (num_selected < 0) num_selected = 0; //fixes weird random mem error
-
         if (selected[i][j] == true) {
             selected[i][j] = false;
             num_selected--;
@@ -176,11 +170,6 @@ public class GameModel {
         return model[x][y];
     }
 
-    /*public void setField(int x, int y, short color, short shape,
-                         short shading, short number) {
-        model[x][y] = new Card(color, shape, shading, number);
-    }*/
-
     private void initCards() {
 
         for (short c = 0; c < 3; c++) {
@@ -193,7 +182,6 @@ public class GameModel {
                 }
             }
         }
-
     }
 
     private void initBoard() {
@@ -271,7 +259,6 @@ public class GameModel {
 
         unSelectAll();
     }
-
 
     private boolean checkSet(Card [] cards) {
 
