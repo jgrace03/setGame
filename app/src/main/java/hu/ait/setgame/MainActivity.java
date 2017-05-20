@@ -9,11 +9,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 import hu.ait.setgame.model.GameModel;
 import hu.ait.setgame.view.GameView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView time;
+    private TextView tvNumCards;
+    private double startTime;
+    private double ellapsedTime;
+    private Timer mainTimer = null;
+
+    private class MyShowTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ellapsedTime = (
+                            System.currentTimeMillis()- startTime)/1000.0;
+                    time.setText("" + String.format("%.2f", ellapsedTime) + "s");
+                }
+            });
+
+        }
+    }
 
     public static final int REQUEST_CODE = 101;
 
@@ -27,7 +54,12 @@ public class MainActivity extends AppCompatActivity {
 
         ((MainApplication)getApplication()).openRealm();
 
+        time = (TextView) findViewById(R.id.time);
+        time.setText("0.00s");
+
         final GameView gameView = (GameView) findViewById(R.id.gameView);
+        tvNumCards = (TextView) findViewById(R.id.tvNumCards);
+        tvNumCards.setText("81");
 
         showStartGameDialog(gameView);
 
@@ -35,31 +67,38 @@ public class MainActivity extends AppCompatActivity {
         btnShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //gameView.resetGame();
                 gameView.inval();
                 GameModel.getInstance().shuffle();
             }
         });
     }
 
-    public void openScoreBoard(){
-        Intent intent = new Intent(this, ScoreBoard.class);
-        startActivity(intent);
+    public void updateCardsLeft(int numCards) {
+        tvNumCards.setText(String.valueOf(numCards));
     }
 
-    // NOTE: This method is not being used because no request codes are sent with Intent
+    public double endGame() {
+        if (mainTimer != null) {
+            mainTimer.cancel();
+            mainTimer = null;
+        }
+
+        return ellapsedTime;
+    }
+
+    public void openScoreBoard(){
+        Intent intent = new Intent(this, ScoreBoard.class);
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode) {
-            case RESULT_OK:
-                if (requestCode == REQUEST_CODE) {
-                    // TODO: Start a new game upon return from high scores
-                }
-                break;
             case RESULT_CANCELED:
-                Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
+                final GameView gameView = (GameView) findViewById(R.id.gameView);
+                showStartGameDialog(gameView);
                 break;
         }
     }
@@ -67,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     public void showUserNameDialog(final GameView gameView) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater myLayout = this.getLayoutInflater();
-        View Username = myLayout.inflate(R.layout.username, null);
+        final View Username = myLayout.inflate(R.layout.username, null);
 
         builder.setView(Username);
         final AlertDialog alert = builder.create();
@@ -78,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText etUsername = (EditText) gameView.findViewById(R.id.etUsername);
+                EditText etUsername = (EditText) Username.findViewById(R.id.etUsername);
                 String username = "";
                 // TODO: etUsername is null
                 if (etUsername != null) {
@@ -99,6 +138,15 @@ public class MainActivity extends AppCompatActivity {
         GameModel.getInstance(this,((MainApplication)getApplication()).getRealm(), username)
                 .startGame();
         gameView.inval();
+
+        startTime = System.currentTimeMillis();
+
+        if (mainTimer == null) {
+            mainTimer = new Timer();
+
+            mainTimer.schedule(new MyShowTimerTask(),
+                    0, 10);
+        }
     }
 
     public void showSplash() {

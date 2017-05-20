@@ -13,6 +13,7 @@ import hu.ait.setgame.R;
 import hu.ait.setgame.data.Game;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 
 public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ViewHolder> {
@@ -21,12 +22,13 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
     private Context context;
     private Realm realmGame;
 
-    public ListRecyclerAdapter(Context context, Realm realmGame) {
+    public ListRecyclerAdapter(Context context, Realm realm) {
         this.context = context;
-        this.realmGame = realmGame;
+        this.realmGame = realm;
 
-        // TODO: Sort by time
-        RealmResults<Game> itemResult = realmGame.where(Game.class).findAll();
+        RealmResults<Game> itemResult = realmGame.where(Game.class)
+                .findAll()
+                .sort("time", Sort.ASCENDING);
 
         gameList = new ArrayList<Game>();
         for (int i = 0; i < itemResult.size(); i++) {
@@ -47,7 +49,7 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
     public void onBindViewHolder(ListRecyclerAdapter.ViewHolder holder, int position) {
 
         holder.tvUsername.setText(gameList.get(position).getUserName());
-        holder.tvScore.setText(gameList.get(position).getTime());
+        holder.tvScore.setText(String.valueOf(gameList.get(position).getTime()) + "s");
     }
 
     @Override

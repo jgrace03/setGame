@@ -30,9 +30,23 @@
         android:text="Timer: "/>
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:layout_toRightOf="@+id/timer"
+        android:layout_below="@+id/shuffle"/>
+
+    <TextView
         android:id="@+id/tvCardsLeft"
         android:layout_below="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cards Left: "/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvNumCards"
+        android:layout_toRightOf="@+id/tvCardsLeft"
+        android:layout_below="@+id/timer"/>
 </RelativeLayout>

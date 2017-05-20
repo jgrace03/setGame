@@ -8,7 +8,7 @@ public class Game extends RealmObject {
     @PrimaryKey
     private String gameID;
     private String userName;
-    private String time;
+    private double time;
 
     public void setGameID(String gameID) {
         this.gameID = gameID;
@@ -26,11 +26,11 @@ public class Game extends RealmObject {
         return userName;
     }
 
-    public void setTime(String time) {
+    public void setTime(double time) {
         this.time = time;
     }
 
-    public String getTime() {
+    public double getTime() {
         return time;
     }
 }

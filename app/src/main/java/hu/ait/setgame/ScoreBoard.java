@@ -5,13 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import hu.ait.setgame.adapter.ListRecyclerAdapter;
-import io.realm.Realm;
 
 public class ScoreBoard extends AppCompatActivity {
 
-    private Realm realmGame;
     private ListRecyclerAdapter listRecyclerAdapter;
     private RecyclerView recyclerItem;
 

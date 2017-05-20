@@ -62,8 +62,8 @@ public class GameModel {
         initBoard();
     }
 
-    private void endGame() {
-        saveGame();
+    private void endGame(double time) {
+        saveGame(time);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
         LayoutInflater myLayout = mainActivity.getLayoutInflater();
@@ -96,12 +96,12 @@ public class GameModel {
         });
     }
 
-    private void saveGame() {
+    private void saveGame(double time) {
         // TODO: Check Realm for longest time
         Game game = new Game();
         game.setGameID(UUID.randomUUID().toString());
         game.setUserName(username);
-        game.setTime("10s");
+        game.setTime(time);
 
         if (!realmGame.isInTransaction()) { realmGame.beginTransaction(); }
         realmGame.copyToRealm(game);
@@ -253,7 +253,6 @@ public class GameModel {
         }
 
         if (checkSet(selectedCards)) {
-
             num_pairs++;
 
             System.out.println(num_pairs);
@@ -263,8 +262,10 @@ public class GameModel {
                 model[YCoords[i]][XCoords[i]] = getRandomCard();
             }
 
-            if (num_pairs == 27) {
-                endGame();
+            mainActivity.updateCardsLeft(cards_left);
+
+            if (cards_left == 0) {
+                endGame(mainActivity.endGame());
             }
         }
 
