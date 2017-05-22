@@ -1,7 +1,6 @@
 package hu.ait.setgame.model;
 
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +22,6 @@ public class GameModel {
 
     private String username;
     public int cards_left;
-    public int num_pairs;
     private int num_selected;
     public int width = 5;
     public int height = 4;
@@ -150,7 +148,6 @@ public class GameModel {
         }
 
         cards_left = 81;
-        num_pairs = 0;
     }
 
     public void unSelectAll() {
@@ -243,10 +240,6 @@ public class GameModel {
         }
 
         if (checkSet(selectedCards)) {
-            num_pairs++;
-
-            System.out.println(num_pairs);
-
             for (int i = 0; i < 3; i++) {
                 cards.remove(selectedCards[i]);
                 model[YCoords[i]][XCoords[i]] = getRandomCard();

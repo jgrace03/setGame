@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     elapsedTime = (
                             System.currentTimeMillis() - startTime) / 1000.0;
-                    String timeText = String.valueOf(elapsedTime) + getString(R.string.ss);
+                    String timeText = String.format("%.2f", elapsedTime) + getString(R.string.ss);
                     time.setText(timeText);
                 }
             });
@@ -140,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
         startTime = System.currentTimeMillis();
         if (mainTimer == null) {
             mainTimer = new Timer();
-            mainTimer.schedule(new MyShowTimerTask(),
-                    0, 10);
+            mainTimer.schedule(new MyShowTimerTask(), 0, 100);
         }
     }
 
